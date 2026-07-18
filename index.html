@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>От мистера Дарси — мисс Элизабет</title>
+    <meta name="description" content="Интерактивное письмо от мистера Дарси мисс Элизабет — сломайте печать, чтобы прочесть.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Herr+Von+Muellerhoff&family=Calligraffitti&display=swap" rel="stylesheet">
+    <style>
+        /* ─── root ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #0f0906;
+            --bg-mid: #2d1a0e;
+            --bg-mid-2: #412612;
+            --parchment: #dac59a;
+            --parchment-2: #c7a96f;
+            --parchment-3: #b8955a;
+            --parchment-shadow: #a3814c;
+            --ink: #1a120b;
+            --ink-soft: #3d2e1c;
+            --wax: #711b23;
+            --wax-dark: #3d0c11;
+            --wax-light: #9c3340;
+            --wax-glow: #d45a5a;
+            --gold: #b08d57;
+            --gold-soft: #d9c592;
+            --gold-light: #e8dbb0;
+            --serif: 'IM Fell English', Georgia, serif;
+            --serif-sc: 'IM Fell English SC', Georgia, serif;
+            --script: 'Herr Von Muellerhoff', cursive;
+            --handwriting: 'Calligraffitti', cursive;
+            --env-width: min(85vw, 520px);
+            --letter-width: min(88vw, 760px);
+            --seal-size: clamp(64px, 16vw, 92px);
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            background: radial-gradient(ellipse at 50% 30%, var(--bg-mid-2) 0%, var(--bg-mid) 45%, var(--bg-deep) 100%);
+            color: var(--parchment);
+            font-family: var(--serif);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(16px, 4vw, 48px) 12px 40px;
+        }
+
+        /* ─── Atmospheric overlays ─── */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(115deg, rgba(0, 0, 0, 0.07) 0px, rgba(0, 0, 0, 0.07) 1px, transparent 1px, transparent 90px),
+                radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.70) 0%, transparent 65%),
+                radial-gradient(ellipse at 50% 0%, rgba(20, 10, 5, 0.5) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 45% at 50% 28%, rgba(217, 183, 110, 0.07) 0%, transparent 70%);
+            animation: glowBreathe 7s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes glowBreathe {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ─── header ─── */
+        h1.eyebrow {
+            position: relative;
+            z-index: 2;
+            font-family: var(--serif-sc);
+            letter-spacing: 0.30em;
+            font-size: clamp(9px, 2vw, 13px);
+            color: var(--gold-soft);
+            text-transform: uppercase;
+            margin: 0 0 4px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        p.sub {
+            position: relative;
+            z-index: 2;
+            font-style: italic;
+            color: var(--parchment-shadow);
+            font-size: clamp(11px, 2.4vw, 15px);
+            margin: 0 0 clamp(24px, 5vw, 40px);
+            text-align: center;
+            max-width: 34ch;
+            letter-spacing: 0.04em;
+            opacity: 0.9;
+        }
+
+        .stage {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 920px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scene {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            perspective: 1600px;
+        }
+
+        /* ─── ENVELOPE ─── */
+        .envelope {
+            position: relative;
+            z-index: 2;
+            width: var(--env-width);
+            aspect-ratio: 1 / 0.7;
+            cursor: pointer;
+            animation: envelopeAppear 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+            touch-action: manipulation;
+        }
+
+        .envelope:focus-visible {
+            outline: 2px solid var(--gold-soft);
+            outline-offset: 6px;
+            border-radius: 4px;
+        }
+
+        .envelope::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -12%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 30%;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, transparent 70%);
+            filter: blur(6px);
+            z-index: -1;
+            transition: opacity 1.4s ease, transform 1.4s ease;
+            transition-delay: 1.3s;
+        }
+
+        .scene.is-open .envelope::after {
+            opacity: 0.5;
+            transform: translateX(-50%) scale(0.9);
+            filter: blur(10px);
+        }
+
+        @keyframes envelopeAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .envelope-visual {
+            position: absolute;
+            inset: 0;
+            transition: filter 1.4s ease, transform 1.4s ease, opacity 1.4s ease;
+        }
+
+        .scene.is-open .envelope-visual {
+            filter: blur(12px) brightness(0.7) saturate(0.7);
+            transform: scale(0.72) translateY(20px);
+            opacity: 0.25;
+            transition-delay: 1.5s;
+        }
+
+        /* ─── envelope body ─── */
+        .envelope-body {
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(0.00% 2.20%, 9.09% 2.84%, 18.18% 0.58%, 27.27% 9.68%, 36.36% 1.28%, 45.45% 2.28%, 54.55% 2.30%, 63.64% 0.93%, 72.73% 3.95%, 81.82% 3.41%, 90.91% 0.57%, 100.00% 2.20%, 97.71% 9.09%, 96.01% 18.18%, 95.83% 27.27%, 96.34% 36.36%, 95.77% 45.45%, 99.29% 54.55%, 97.27% 63.64%, 97.87% 72.73%, 98.44% 81.82%, 98.08% 90.91%, 97.80% 100.00%, 90.91% 95.80%, 81.82% 95.54%, 72.73% 99.01%, 63.64% 95.65%, 54.55% 97.31%, 45.45% 98.81%, 36.36% 97.29%, 27.27% 99.43%, 18.18% 95.54%, 9.09% 90.73%, 0.00% 99.07%, 0.49% 90.91%, 0.49% 81.82%, 1.69% 72.73%, 4.42% 63.64%, 4.49% 54.55%, 0.62% 45.45%, 0.43% 36.36%, 2.01% 27.27%, 0.96% 18.18%, 2.20% 9.09%);
+            background:
+                radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(74, 44, 20, 0.30) 88%, rgba(58, 32, 14, 0.60) 100%),
+                radial-gradient(ellipse 60px 40px at 12% 85%, rgba(107, 68, 35, 0.35), transparent 70%),
+                radial-gradient(ellipse 50px 50px at 92% 10%, rgba(107, 68, 35, 0.30), transparent 70%),
+                repeating-linear-gradient(100deg, rgba(0, 0, 0, 0.05) 0px, transparent 2px, transparent 40px),
+                linear-gradient(155deg, var(--parchment) 0%, var(--parchment-2) 50%, var(--parchment-3) 100%);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6), inset 0 0 50px rgba(74, 44, 20, 0.30);
+        }
+
+        .envelope-body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(65deg, transparent 47%, rgba(0, 0, 0, 0.08) 49.5%, rgba(0, 0, 0, 0.12) 50.5%, transparent 53%),
+                linear-gradient(-65deg, transparent 47%, rgba(0, 0, 0, 0.08) 49.5%, rgba(0, 0, 0, 0.12) 50.5%, transparent 53%);
+            pointer-events: none;
+        }
+
+        .envelope-body::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(ellipse 34px 26px at 18% 24%, rgba(90, 60, 25, 0.25), transparent 70%),
+                radial-gradient(ellipse 26px 20px at 82% 62%, rgba(90, 60, 25, 0.22), transparent 70%),
+                radial-gradient(ellipse 40px 18px at 52% 88%, rgba(90, 60, 25, 0.20), transparent 70%),
+                radial-gradient(ellipse 28px 22px at 70% 20%, rgba(90, 60, 25, 0.18), transparent 70%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.02 0.35' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+            background-size: auto, auto, auto, auto, 130px 130px, 60px 60px;
+            mix-blend-mode: multiply;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* ─── flap ─── */
+        .flap-wrap {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 62%;
+            transform-style: preserve-3d;
+            transform-origin: top center;
+            transition: transform 1.5s cubic-bezier(0.20, 0.65, 0.30, 1);
+            z-index: 3;
+        }
+
+        .flap {
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background:
+                linear-gradient(160deg, var(--parchment) 0%, var(--parchment-2) 55%, var(--parchment-3) 100%);
+            box-shadow: inset 0 -16px 24px -12px rgba(0, 0, 0, 0.35);
+            backface-visibility: hidden;
+        }
+
+        .flap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background: radial-gradient(ellipse 60% 30% at 50% 80%, rgba(0, 0, 0, 0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Убираем красный внутренний клапан, делаем его светлым */
+        .flap-inside {
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            background:
+                linear-gradient(160deg, var(--parchment) 0%, var(--parchment-2) 55%, var(--parchment-3) 100%);
+            transform: rotateX(180deg);
+            backface-visibility: hidden;
+            opacity: 0.5; /* чтобы не перекрывал внешний клапан, но виден при откидывании */
+        }
+
+        .scene.is-open .flap-wrap {
+            transform: rotateX(-176deg);
+        }
+
+        /* ─── SEAL on envelope ─── */
+        .seal {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--seal-size);
+            height: var(--seal-size);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            z-index: 5;
+            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.60)) drop-shadow(0 2px 0 rgba(255, 255, 255, 0.06));
+            transition: filter 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .seal:hover {
+            filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.70)) drop-shadow(0 1px 0 rgba(255, 255, 255, 0.10));
+        }
+
+        .seal:focus-visible {
+            outline: 2px solid var(--gold-soft);
+            outline-offset: 4px;
+            border-radius: 50%;
+        }
+
+        .seal .half {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 28% 20%, rgba(255, 255, 255, 0.55) 0%, transparent 16%),
+                radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.28) 0%, transparent 24%),
+                radial-gradient(circle at 68% 74%, rgba(0, 0, 0, 0.45) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.30) 0%, transparent 30%),
+                radial-gradient(circle at 40% 35%, var(--wax-light) 0%, var(--wax) 48%, var(--wax-dark) 100%);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.25), inset 0 -4px 10px rgba(0, 0, 0, 0.50);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+        }
+
+        .seal .half::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 22% 60%, rgba(0, 0, 0, 0.18) 0%, transparent 12%),
+                radial-gradient(circle at 75% 30%, rgba(0, 0, 0, 0.15) 0%, transparent 10%),
+                radial-gradient(circle at 55% 78%, rgba(0, 0, 0, 0.14) 0%, transparent 14%),
+                radial-gradient(circle at 45% 40%, rgba(255, 200, 150, 0.12) 0%, transparent 20%);
+        }
+
+        .seal .half.l {
+            clip-path: polygon(50.00% 0.00%, 50.00% 94.40%, 42.84% 95.18%, 36.29% 92.21%, 27.76% 93.64%, 21.65% 89.03%, 18.84% 81.16%, 9.48% 79.44%, 5.47% 72.69%, 4.36% 64.83%, 2.85% 57.47%, 5.19% 50.00%, 6.64% 43.13%, 5.13% 35.42%, 10.63% 29.94%, 13.58% 23.54%, 17.93% 17.93%, 24.14% 14.41%, 28.77% 8.33%, 35.59% 5.66%, 42.30% 1.41%, 50.00% 2.88%, 50.00% 100.00%);
+        }
+
+        .seal .half.r {
+            clip-path: polygon(50.00% 0.00%, 96.70% 50.00%, 96.80% 57.41%, 97.28% 65.36%, 91.68% 71.24%, 88.06% 77.66%, 83.63% 83.63%, 76.44% 86.39%, 71.37% 91.95%, 64.78% 95.49%, 57.65% 98.27%, 50.00% 94.40%, 50.00% 2.88%, 57.49% 2.69%, 64.52% 5.30%, 71.81% 7.20%, 77.47% 12.20%, 82.23% 17.77%, 90.60% 20.50%, 94.70% 27.22%, 96.77% 34.80%, 97.73% 42.44%, 50.00% 100.00%);
+        }
+
+        .seal .drip {
+            position: absolute;
+            border-radius: 40% 60% 55% 45% / 30% 30% 70% 70%;
+            background: radial-gradient(circle at 35% 25%, var(--wax-light) 0%, var(--wax-dark) 80%);
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.15), 0 3px 6px rgba(0, 0, 0, 0.40);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .seal .drip.d1 {
+            width: 12%;
+            aspect-ratio: 1 / 1.6;
+            left: 14%;
+            bottom: -10%;
+            transform: rotate(-8deg);
+        }
+        .seal .drip.d2 {
+            width: 10%;
+            aspect-ratio: 1 / 1.4;
+            left: 62%;
+            bottom: -8%;
+            transform: rotate(6deg);
+            border-radius: 55% 45% 40% 60% / 35% 25% 75% 65%;
+        }
+        .seal .drip.d3 {
+            width: 8%;
+            aspect-ratio: 1 / 1.2;
+            left: 40%;
+            bottom: -6%;
+            transform: rotate(2deg);
+            border-radius: 45% 55% 50% 50% / 40% 30% 70% 60%;
+            opacity: 0.7;
+        }
+
+        .seal .monogram {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--script);
+            font-size: calc(var(--seal-size) * 0.45);
+            color: var(--gold-light);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            letter-spacing: 0.06em;
+        }
+
+        .seal .monogram::after {
+            content: "·";
+            position: absolute;
+            bottom: 6%;
+            font-size: calc(var(--seal-size) * 0.15);
+            color: var(--gold-light);
+            opacity: 0.6;
+        }
+
+        /* ─── Crack & shatter effect ─── */
+        .seal.cracking .half.l {
+            transform: translate(-14%, 12%) rotate(-28deg);
+            opacity: 0;
+        }
+        .seal.cracking .half.r {
+            transform: translate(14%, 12%) rotate(28deg);
+            opacity: 0;
+        }
+        .seal.cracking .drip {
+            opacity: 0;
+            transform: translateY(10%) scale(0.8);
+        }
+        .seal.cracking .monogram {
+            opacity: 0;
+        }
+
+        .seal .spark {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 120, 0.8) 0%, transparent 60%);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: none;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .seal.cracking .spark {
+            animation: sealFlash 0.9s ease-out forwards;
+        }
+        @keyframes sealFlash {
+            0% {
+                opacity: 0;
+                transform: scale(0.4);
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1.8);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2.5);
+            }
+        }
+
+        .scene.is-open .seal {
+            pointer-events: none;
+        }
+
+        .envelope-hint {
+            position: absolute;
+            bottom: -18%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-style: italic;
+            font-size: clamp(10px, 2vw, 13px);
+            color: var(--parchment-shadow);
+            opacity: 0.8;
+            transition: opacity 0.6s ease;
+            white-space: nowrap;
+            letter-spacing: 0.04em;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .scene.is-open .envelope-hint {
+            opacity: 0;
+        }
+
+        /* ─── LIGHT RAYS ─── */
+        .light-rays {
+            position: absolute;
+            left: 50%;
+            top: -12%;
+            width: 150%;
+            height: 150%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2.2s ease;
+            transition-delay: 2.4s;
+            mix-blend-mode: screen;
+            z-index: 1;
+        }
+
+        .scene.is-open .light-rays {
+            opacity: 0.45;
+        }
+
+        .light-rays .beam {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(255, 214, 150, 0.45) 0%, rgba(255, 214, 150, 0.08) 55%, transparent 85%);
+            filter: blur(20px);
+            transform-origin: top center;
+        }
+
+        /* ─── DUST ─── */
+        .dust {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 228, 178, 0.95) 0%, rgba(255, 228, 178, 0) 72%);
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .scene.is-open .dust {
+            animation: dustFloat var(--dur, 8s) ease-in-out infinite;
+            animation-delay: var(--ddelay, 0s);
+        }
+
+        @keyframes dustFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            15% {
+                opacity: var(--dop, 0.5);
+            }
+            50% {
+                opacity: calc(var(--dop, 0.5)*0.5);
+                transform: translate(calc(var(--dx, 10%) * 0.5), calc(var(--dy, -10%) * 0.5));
+            }
+            85% {
+                opacity: var(--dop, 0.5);
+            }
+            100% {
+                transform: translate(var(--dx, 10%), var(--dy, -20%));
+                opacity: 0;
+            }
+        }
+
+        /* ─── LETTER ─── */
+        .letter {
+            position: relative;
+            z-index: 4;
+            width: var(--letter-width);
+            margin-top: calc(-1 * var(--env-width) * 0.08);
+            padding: clamp(28px, 5vw, 48px) clamp(24px, 5vw, 52px) clamp(28px, 5vw, 44px);
+            clip-path: polygon(0.00% 0.41%, 8.33% 1.41%, 16.67% 0.94%, 25.00% 0.92%, 33.33% 0.71%, 41.67% 1.79%, 50.00% 0.52%, 58.33% 0.27%, 66.67% 0.47%, 75.00% 0.47%, 83.33% 0.59%, 91.67% 0.48%, 100.00% 0.06%, 99.41% 8.33%, 99.44% 16.67%, 98.98% 25.00%, 99.64% 33.33%, 99.87% 41.67%, 99.64% 50.00%, 99.02% 58.33%, 99.30% 66.67%, 98.68% 75.00%, 98.55% 83.33%, 99.25% 91.67%, 99.94% 100.00%, 91.67% 98.69%, 83.33% 98.64%, 75.00% 99.29%, 66.67% 98.82%, 58.33% 99.46%, 50.00% 98.35%, 41.67% 98.50%, 33.33% 98.57%, 25.00% 98.28%, 16.67% 99.58%, 8.33% 99.02%, 0.00% 99.56%, 1.44% 91.67%, 0.70% 83.33%, 0.25% 75.00%, 1.13% 66.67%, 0.19% 58.33%, 1.27% 50.00%, 0.01% 41.67%, 0.82% 33.33%, 0.86% 25.00%, 0.22% 16.67%, 0.86% 8.33%);
+            background:
+                radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(74, 44, 20, 0.22) 88%, rgba(58, 32, 14, 0.50) 100%),
+                radial-gradient(ellipse 70px 44px at 85% 82%, rgba(107, 68, 35, 0.28), transparent 70%),
+                radial-gradient(ellipse 40px 40px at 8% 12%, rgba(107, 68, 35, 0.24), transparent 70%),
+                repeating-linear-gradient(180deg, rgba(120, 95, 50, 0.05) 0px, transparent 1px, transparent 30px),
+                linear-gradient(170deg, #ecddb0 0%, var(--parchment) 50%, var(--parchment-2) 100%);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.60), inset 0 0 50px rgba(74, 44, 20, 0.25);
+            opacity: 0;
+            transform: scaleY(0.04) translateY(8%) rotate(-0.6deg);
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        .letter::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, transparent 28%, rgba(0, 0, 0, 0.06) 29.5%, rgba(0, 0, 0, 0.02) 32%, transparent 34%),
+                linear-gradient(180deg, transparent 61%, rgba(0, 0, 0, 0.06) 62.5%, rgba(0, 0, 0, 0.02) 65%, transparent 67%),
+                linear-gradient(90deg, transparent 48%, rgba(0, 0, 0, 0.03) 50%, transparent 52%);
+            pointer-events: none;
+        }
+
+        .letter::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(ellipse 46px 30px at 12% 16%, rgba(90, 60, 25, 0.22), transparent 70%),
+                radial-gradient(ellipse 30px 22px at 88% 40%, rgba(90, 60, 25, 0.20), transparent 70%),
+                radial-gradient(ellipse 50px 20px at 30% 92%, rgba(90, 60, 25, 0.18), transparent 70%),
+                radial-gradient(ellipse 24px 24px at 68% 78%, rgba(90, 60, 25, 0.16), transparent 70%),
+                radial-gradient(ellipse 18px 18px at 50% 50%, rgba(120, 95, 50, 0.10), transparent 60%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.015 0.3' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+            background-size: auto, auto, auto, auto, auto, 130px 130px, 60px 60px;
+            mix-blend-mode: multiply;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .scene.is-open .letter {
+            animation: unfold 0.9s cubic-bezier(0.20, 0.65, 0.30, 1) forwards;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes unfold {
+            0% {
+                opacity: 0;
+                transform: scaleY(0.04) translateY(8%) rotate(-0.6deg);
+            }
+            40% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1) rotate(-0.6deg);
+            }
+        }
+
+        /* ─── letter content ─── */
+        .letter-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .letter-address {
+            text-align: center;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .letter-address .from {
+            display: block;
+            font-family: var(--serif-sc);
+            font-size: clamp(10px, 2vw, 14px);
+            letter-spacing: 0.22em;
+            color: var(--ink-soft);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .letter-address .to {
+            display: block;
+            font-family: var(--script);
+            font-size: clamp(28px, 7vw, 48px);
+            line-height: 1.1;
+            color: var(--ink);
+            letter-spacing: 0.02em;
+        }
+
+        .letter-heading {
+            font-family: var(--serif-sc);
+            font-size: clamp(9px, 2vw, 12px);
+            letter-spacing: 0.22em;
+            color: var(--ink-soft);
+            text-align: right;
+            margin: 0 0 clamp(12px, 2.5vw, 22px);
+            opacity: 0;
+            text-transform: uppercase;
+            align-self: flex-end;
+            width: 100%;
+        }
+
+        .letter-inner p {
+            font-family: var(--handwriting);
+            font-style: normal;
+            color: var(--ink);
+            font-size: clamp(15px, 3.2vw, 20px);
+            line-height: 1.75;
+            margin: 0 0 clamp(10px, 1.8vw, 16px);
+            opacity: 0;
+            align-self: flex-start;
+            width: 100%;
+            letter-spacing: 0.02em;
+        }
+
+        .letter-inner p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .letter-inner .signature {
+            font-family: var(--handwriting);
+            font-style: normal;
+            font-size: clamp(32px, 7.5vw, 48px);
+            color: var(--wax);
+            text-align: right;
+            margin-top: clamp(8px, 1.5vw, 16px);
+            letter-spacing: 0.04em;
+            line-height: 1.2;
+            align-self: flex-end;
+            width: auto;
+        }
+
+        .letter-inner .signature .sig-line {
+            display: block;
+            font-family: var(--serif);
+            font-size: clamp(9px, 1.6vw, 12px);
+            color: var(--ink-soft);
+            letter-spacing: 0.14em;
+            font-style: italic;
+            margin-top: 2px;
+            opacity: 0.7;
+        }
+
+        .scene.is-open .letter-heading,
+        .scene.is-open .letter-inner p {
+            animation: lineFade 1s ease forwards;
+        }
+
+        .scene.is-open .letter-address {
+            animation: lineFade 1s ease forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+        }
+        .scene.is-open .letter-heading {
+            animation-delay: 1.2s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(1) {
+            animation-delay: 1.5s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(2) {
+            animation-delay: 1.9s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(3) {
+            animation-delay: 2.3s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(4) {
+            animation-delay: 2.7s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(5) {
+            animation-delay: 3.1s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(6) {
+            animation-delay: 3.5s;
+        }
+        .scene.is-open .letter-inner p:nth-of-type(7) {
+            animation-delay: 3.9s;
+        }
+        .scene.is-open .letter-inner .signature {
+            animation: lineFade 1s ease forwards;
+            animation-delay: 4.3s;
+            opacity: 0;
+        }
+
+        @keyframes lineFade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─── FLOWERS (outside envelope, left & right edges) ─── */
+        .flowers-side {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1.4s ease;
+            transition-delay: 1.8s;
+        }
+        .flowers-side.left {
+            left: clamp(4px, 1.5vw, 20px);
+        }
+        .flowers-side.right {
+            right: clamp(4px, 1.5vw, 20px);
+        }
+
+        .scene.is-open .flowers-side {
+            opacity: 0.85;
+            transition-delay: 1.8s;
+        }
+
+        .flowers-side svg {
+            width: clamp(140px, 28vw, 260px);
+            height: auto;
+            filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+        }
+
+        .flowers-side .flower-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(20px, 4vh, 60px);
+        }
+
+        /* ─── EPILOGUE ─── */
+        .epilogue {
+            position: relative;
+            z-index: 3;
+            margin-top: clamp(24px, 5vw, 44px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .scene.is-open .epilogue {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            transition-delay: 5.2s;
+        }
+
+        .candle-btn {
+            font-family: var(--serif-sc);
+            letter-spacing: 0.18em;
+            font-size: clamp(10px, 1.8vw, 13px);
+            text-transform: uppercase;
+            color: var(--bg-deep);
+            background: linear-gradient(180deg, var(--gold-light), var(--gold));
+            border: none;
+            padding: clamp(10px, 2vw, 16px) clamp(20px, 4vw, 36px);
+            border-radius: 2px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.50);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .candle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+            background: linear-gradient(180deg, #f0e2b8, var(--gold-soft));
+        }
+
+        .candle-btn:focus-visible {
+            outline: 2px solid var(--gold-soft);
+            outline-offset: 4px;
+        }
+
+        .candle-scene {
+            margin-top: clamp(16px, 3vw, 28px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1.2s ease both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .candle {
+            width: clamp(56px, 14vw, 80px);
+            height: clamp(88px, 22vw, 126px);
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.50));
+        }
+
+        .flame {
+            transform-origin: 50% 100%;
+            animation: flicker 2.6s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+            0%,
+            100% {
+                transform: scaleY(1) scaleX(1) rotate(0deg);
+            }
+            25% {
+                transform: scaleY(1.12) scaleX(0.90) rotate(-3deg);
+            }
+            50% {
+                transform: scaleY(0.90) scaleX(1.08) rotate(2.5deg);
+            }
+            75% {
+                transform: scaleY(1.08) scaleX(0.94) rotate(-1.5deg);
+            }
+        }
+
+        .epilogue-text {
+            margin-top: clamp(12px, 2vw, 20px);
+            max-width: 34ch;
+            text-align: center;
+            font-style: italic;
+            color: var(--parchment-shadow);
+            font-size: clamp(12px, 2.2vw, 15px);
+            line-height: 1.7;
+            letter-spacing: 0.02em;
+        }
+
+        .sound-toggle {
+            margin-top: clamp(12px, 2vw, 20px);
+            background: none;
+            border: 1px solid var(--gold);
+            color: var(--gold-soft);
+            font-family: var(--serif-sc);
+            font-size: clamp(9px, 1.4vw, 12px);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: clamp(6px, 1vw, 10px) clamp(14px, 3vw, 24px);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .sound-toggle:hover {
+            background: var(--gold);
+            color: var(--bg-deep);
+            border-color: var(--gold-light);
+        }
+
+        .sound-toggle[aria-pressed="true"] {
+            background: var(--gold);
+            color: var(--bg-deep);
+            border-color: var(--gold-light);
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+        }
+
+        /* ─── reduced motion ─── */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-delay: 0s !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ─── small screen tweaks ─── */
+        @media (max-width: 600px) {
+            .flowers-side svg {
+                width: clamp(80px, 18vw, 120px);
+            }
+            .flowers-side .flower-group {
+                gap: clamp(10px, 2vh, 30px);
+            }
+            .letter-inner p {
+                font-size: 14px;
+                line-height: 1.65;
+            }
+            .letter-address .to {
+                font-size: clamp(24px, 6vw, 32px);
+            }
+        }
+        @media (max-width: 400px) {
+            .flowers-side svg {
+                width: clamp(60px, 14vw, 90px);
+            }
+            .flowers-side .flower-group {
+                gap: 6px;
+            }
+            .letter-inner p {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="eyebrow">Гордость и предубеждение</h1>
+    <p class="sub">Сломайте печать, чтобы прочесть письмо.</p>
+
+    <div class="stage">
+        <div class="scene" id="scene">
+
+            <div class="envelope" id="envelope" tabindex="0" role="button"
+            aria-label="Конверт с письмом. Нажмите на печать, чтобы открыть.">
+
+            <div class="envelope-visual" id="envelopeVisual">
+                <div class="envelope-body"></div>
+
+                <div class="flap-wrap" id="flapWrap">
+                    <div class="flap-inside"></div>
+                    <div class="flap"></div>
+                </div>
+
+                <button class="seal" id="seal" aria-label="Сломать сургучную печать">
+                    <span class="half l"></span>
+                    <span class="half r"></span>
+                    <span class="drip d1"></span>
+                    <span class="drip d2"></span>
+                    <span class="drip d3"></span>
+                    <span class="spark" aria-hidden="true"></span>
+                    <span class="monogram" aria-hidden="true">D</span>
+                </button>
+
+                <span class="envelope-hint" aria-hidden="true">нажмите на печать</span>
+            </div>
+        </div>
+
+        <!-- Цветы по бокам -->
+        <div class="flowers-side left" aria-hidden="true">
+            <div class="flower-group">
+                <svg viewBox="0 0 60 60" role="img" aria-hidden="true">
+                    <defs><path id="petalL" d="M0,0 C-10,-4 -12,-16 0,-24 C12,-16 10,-4 0,0 Z"/></defs>
+                    <g transform="translate(30,30)">
+                        <use href="#petalL" transform="rotate(0) scale(1.2)" fill="#c9a468" opacity="0.92"/>
+                        <use href="#petalL" transform="rotate(51) scale(1.15)" fill="#cfae70" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(103) scale(1.25)" fill="#c39c5f" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(154) scale(1.1)" fill="#d0af73" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(206) scale(1.2)" fill="#c39d61" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(257) scale(1.15)" fill="#ceac6f" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(309) scale(1.2)" fill="#c6a065" opacity="0.9"/>
+                        <use href="#petalL" transform="rotate(15) scale(0.8)" fill="#b97e78"/>
+                        <use href="#petalL" transform="rotate(75) scale(0.75)" fill="#bd8377"/>
+                        <use href="#petalL" transform="rotate(135) scale(0.8)" fill="#b47a71"/>
+                        <use href="#petalL" transform="rotate(195) scale(0.75)" fill="#bb8176"/>
+                        <use href="#petalL" transform="rotate(255) scale(0.8)" fill="#b57c72"/>
+                        <use href="#petalL" transform="rotate(315) scale(0.75)" fill="#bf8478"/>
+                        <use href="#petalL" transform="rotate(0) scale(0.45)" fill="#8a4a45"/>
+                        <use href="#petalL" transform="rotate(72) scale(0.4)" fill="#8f4d47"/>
+                        <use href="#petalL" transform="rotate(144) scale(0.45)" fill="#864744"/>
+                        <use href="#petalL" transform="rotate(216) scale(0.42)" fill="#8c4a46"/>
+                        <use href="#petalL" transform="rotate(288) scale(0.45)" fill="#894845"/>
+                        <circle r="4.5" fill="#5c2e2a"/>
+                    </g>
+                </svg>
+                <svg viewBox="0 0 60 80" role="img" aria-hidden="true">
+                    <g fill="none" stroke="#8a9770" stroke-width="1" stroke-linecap="round" opacity="0.85">
+                        <path d="M30,78 Q26,56 18,38"/>
+                        <path d="M30,78 Q28,50 14,22"/>
+                        <path d="M30,78 Q30,46 24,10"/>
+                        <path d="M30,78 Q32,48 34,8"/>
+                        <path d="M30,78 Q34,52 44,18"/>
+                        <path d="M30,78 Q32,56 46,38"/>
+                    </g>
+                    <g fill="#f0e9d6">
+                        <circle cx="18" cy="38" r="3"/><circle cx="12" cy="30" r="2.4"/><circle cx="22" cy="26" r="2.6"/>
+                        <circle cx="14" cy="22" r="3"/><circle cx="9" cy="18" r="2.2"/><circle cx="18" cy="14" r="2.4"/>
+                        <circle cx="24" cy="10" r="3"/><circle cx="28" cy="18" r="2.2"/><circle cx="20" cy="6" r="2.4"/>
+                        <circle cx="34" cy="8" r="3"/><circle cx="38" cy="14" r="2.4"/><circle cx="30" cy="4" r="2.2"/>
+                        <circle cx="44" cy="18" r="3"/><circle cx="50" cy="24" r="2.4"/><circle cx="40" cy="10" r="2.2"/>
+                        <circle cx="46" cy="38" r="3"/><circle cx="52" cy="44" r="2.4"/><circle cx="40" cy="32" r="2.2"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="flowers-side right" aria-hidden="true">
+            <div class="flower-group">
+                <svg viewBox="0 0 60 60" role="img" aria-hidden="true">
+                    <defs><path id="petalR" d="M0,0 C-10,-4 -12,-16 0,-24 C12,-16 10,-4 0,0 Z"/></defs>
+                    <g transform="translate(30,30)">
+                        <use href="#petalR" transform="rotate(6) scale(1.2)" fill="#d8b46a" opacity="0.92"/>
+                        <use href="#petalR" transform="rotate(58) scale(1.15)" fill="#dcbb74" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(110) scale(1.25)" fill="#d2ac60" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(162) scale(1.1)" fill="#ddbd77" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(214) scale(1.2)" fill="#d3ae63" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(266) scale(1.15)" fill="#dab873" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(318) scale(1.2)" fill="#d1ab5f" opacity="0.9"/>
+                        <use href="#petalR" transform="rotate(30) scale(0.8)" fill="#c99a5e"/>
+                        <use href="#petalR" transform="rotate(90) scale(0.75)" fill="#cd9f61"/>
+                        <use href="#petalR" transform="rotate(150) scale(0.8)" fill="#c4965a"/>
+                        <use href="#petalR" transform="rotate(210) scale(0.75)" fill="#ca9b5d"/>
+                        <use href="#petalR" transform="rotate(270) scale(0.8)" fill="#c5975b"/>
+                        <use href="#petalR" transform="rotate(330) scale(0.75)" fill="#ce9f5e"/>
+                        <use href="#petalR" transform="rotate(0) scale(0.45)" fill="#a5713f"/>
+                        <use href="#petalR" transform="rotate(90) scale(0.4)" fill="#a97543"/>
+                        <use href="#petalR" transform="rotate(180) scale(0.45)" fill="#a06d3c"/>
+                        <use href="#petalR" transform="rotate(270) scale(0.42)" fill="#a5713f"/>
+                        <circle r="4.5" fill="#6b4423"/>
+                    </g>
+                </svg>
+                <svg viewBox="0 0 60 80" role="img" aria-hidden="true">
+                    <g fill="none" stroke="#7c8a5e" stroke-width="1" stroke-linecap="round" opacity="0.8">
+                        <path d="M30,78 Q26,56 18,38"/>
+                        <path d="M30,78 Q28,50 14,22"/>
+                        <path d="M30,78 Q30,46 24,10"/>
+                        <path d="M30,78 Q32,48 34,8"/>
+                        <path d="M30,78 Q34,52 44,18"/>
+                        <path d="M30,78 Q32,56 46,38"/>
+                    </g>
+                    <g fill="#f0e9d6">
+                        <circle cx="18" cy="38" r="3"/><circle cx="12" cy="30" r="2.4"/><circle cx="22" cy="26" r="2.6"/>
+                        <circle cx="14" cy="22" r="3"/><circle cx="9" cy="18" r="2.2"/><circle cx="18" cy="14" r="2.4"/>
+                        <circle cx="24" cy="10" r="3"/><circle cx="28" cy="18" r="2.2"/><circle cx="20" cy="6" r="2.4"/>
+                        <circle cx="34" cy="8" r="3"/><circle cx="38" cy="14" r="2.4"/><circle cx="30" cy="4" r="2.2"/>
+                        <circle cx="44" cy="18" r="3"/><circle cx="50" cy="24" r="2.4"/><circle cx="40" cy="10" r="2.2"/>
+                        <circle cx="46" cy="38" r="3"/><circle cx="52" cy="44" r="2.4"/><circle cx="40" cy="32" r="2.2"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="light-rays" aria-hidden="true">
+            <span class="beam" style="left:30%; width:12%; transform:translateX(-50%) rotate(-7deg);"></span>
+            <span class="beam" style="left:52%; width:18%; transform:translateX(-50%) rotate(3.5deg);"></span>
+            <span class="beam" style="left:72%; width:10%; transform:translateX(-50%) rotate(-2.5deg);"></span>
+        </div>
+
+        <div class="dust" aria-hidden="true" style="left:20%; top:28%; width:0.6%; aspect-ratio:1/1; --dx:8%; --dy:-30%; --dur:8.5s; --ddelay:0.2s; --dop:0.5;"></div>
+        <div class="dust" aria-hidden="true" style="left:36%; top:18%; width:0.4%; aspect-ratio:1/1; --dx:-6%; --dy:-25%; --dur:7s; --ddelay:1s; --dop:0.4;"></div>
+        <div class="dust" aria-hidden="true" style="left:56%; top:24%; width:0.7%; aspect-ratio:1/1; --dx:5%; --dy:-35%; --dur:9.5s; --ddelay:0.5s; --dop:0.55;"></div>
+        <div class="dust" aria-hidden="true" style="left:68%; top:32%; width:0.5%; aspect-ratio:1/1; --dx:-9%; --dy:-28%; --dur:7.8s; --ddelay:1.6s; --dop:0.45;"></div>
+        <div class="dust" aria-hidden="true" style="left:44%; top:14%; width:0.5%; aspect-ratio:1/1; --dx:4%; --dy:-32%; --dur:8.2s; --ddelay:2.2s; --dop:0.5;"></div>
+        <div class="dust" aria-hidden="true" style="left:80%; top:20%; width:0.4%; aspect-ratio:1/1; --dx:-5%; --dy:-22%; --dur:6.5s; --ddelay:0.8s; --dop:0.4;"></div>
+        <div class="dust" aria-hidden="true" style="left:28%; top:38%; width:0.3%; aspect-ratio:1/1; --dx:3%; --dy:-26%; --dur:7.8s; --ddelay:2.8s; --dop:0.35;"></div>
+        <div class="dust" aria-hidden="true" style="left:62%; top:12%; width:0.6%; aspect-ratio:1/1; --dx:-3%; --dy:-30%; --dur:8.8s; --ddelay:1.4s; --dop:0.5;"></div>
+
+        <article class="letter" id="letter">
+            <div class="letter-inner">
+                <div class="letter-address">
+                    <span class="from">От мистера Дарси</span>
+                    <span class="to">мисс Элизабет</span>
+                </div>
+
+                <p class="letter-heading">Пемберли, графство Дербишир</p>
+
+                <p>Дорогая мисс Элизабет,</p>
+
+                <p>Позвольте Вашему неизменно преданному мистеру Дарси выразить самые искренние поздравления в этот прекрасный день.</p>
+
+                <p>Говорят, истинное достоинство человека раскрывается не в богатстве, не в положении и даже не в уме, а в способности делать мир вокруг себя светлее. Если это действительно так, то Вы, без сомнения, обладаете этим редчайшим даром.</p>
+
+                <p>Желаю Вам, чтобы каждый новый день приносил столько же радости, сколько Ваша улыбка приносит окружающим. Пусть сердце всегда остаётся таким же добрым, ум — таким же острым, а взгляд — таким же живым и прекрасным, каким его могла бы описать лишь сама Джейн Остин.</p>
+
+                <p>Пусть на Вашем жизненном пути встречаются лишь те люди, которые способны по достоинству оценить Вашу искренность, силу характера и благородство. И пусть ни одно предубеждение не станет преградой для Вашего счастья.</p>
+
+                <p>Благодарю судьбу за то, что однажды она позволила мистеру Дарси познакомиться со своей мисс Элизабет.</p>
+
+                <p>С днём рождения, мисс Элизабет!<br>
+                Пусть Ваша жизнь будет наполнена счастливыми главами, прекрасными балами, тёплыми встречами и любовью, достойной страниц «Гордости и предубеждения».</p>
+
+                <p class="signature">
+                    Ф. Дарси
+                    <span class="sig-line">Ваш неизменно преданный</span>
+                </p>
+            </div>
+        </article>
+
+    </div>
+
+    <div class="epilogue" id="epilogue">
+        <button class="candle-btn" id="candleBtn">Зажечь свечу</button>
+        <div class="candle-scene" id="candleScene" hidden>
+            <svg class="candle" viewBox="0 0 70 110" role="img" aria-label="Горящая свеча">
+                <defs>
+                    <radialGradient id="glowGrad" cx="50%" cy="30%" r="60%">
+                        <stop offset="0%" stop-color="#fce8b0" stop-opacity="0.5"/>
+                        <stop offset="100%" stop-color="#fce8b0" stop-opacity="0"/>
+                    </radialGradient>
+                    <linearGradient id="waxdrip" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+                        <stop offset="100%" stop-color="#c9b585" stop-opacity="0.5"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="35" cy="28" r="42" fill="url(#glowGrad)" opacity="0.6"/>
+                <g class="flame">
+                    <ellipse cx="35" cy="26" rx="10" ry="18" fill="#f4a338" opacity="0.9"/>
+                    <ellipse cx="35" cy="29" rx="5.5" ry="10" fill="#ffe28a"/>
+                    <ellipse cx="35" cy="27" rx="2.5" ry="6" fill="#fffbe6" opacity="0.8"/>
+                </g>
+                <rect x="27" y="44" width="16" height="56" rx="2" fill="#ece0c2"/>
+                <rect x="27" y="44" width="16" height="56" rx="2" fill="url(#waxdrip)" opacity="0.45"/>
+                <rect x="34" y="40" width="2" height="8" fill="#3a2a18"/>
+                <ellipse cx="35" cy="44" rx="9" ry="2" fill="#e8dcc0" opacity="0.6"/>
+            </svg>
+            <p class="epilogue-text">Пусть этот тихий огонёк заменит собой всякую сцену, что мог бы рассказать экран — здесь довольно света одной свечи и тишины.</p>
+            <button class="sound-toggle" id="soundToggle" aria-pressed="false">Тихая мелодия</button>
+        </div>
+    </div>
+</div>
+
+<div class="visually-hidden" role="status" aria-live="polite" id="liveRegion"></div>
+
+<script>
+    (function() {
+        const scene = document.getElementById('scene');
+        const envelope = document.getElementById('envelope');
+        const seal = document.getElementById('seal');
+        const liveRegion = document.getElementById('liveRegion');
+        let opened = false;
+
+        function openLetter() {
+            if (opened) return;
+            opened = true;
+            seal.classList.add('cracking');
+            envelope.setAttribute('aria-disabled', 'true');
+            envelope.removeAttribute('tabindex');
+            setTimeout(function() {
+                scene.classList.add('is-open');
+                liveRegion.textContent = 'Печать сломана, письмо открывается.';
+            }, 450);
+        }
+
+        seal.addEventListener('click', function(e) { e.stopPropagation();
+            openLetter(); });
+        envelope.addEventListener('click', openLetter);
+        envelope.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault();
+                openLetter(); }
+        });
+
+        // ─── candle epilogue ───
+        const candleBtn = document.getElementById('candleBtn');
+        const candleScene = document.getElementById('candleScene');
+        candleBtn.addEventListener('click', function() {
+            candleScene.hidden = false;
+            candleBtn.hidden = true;
+        });
+
+        // ─── ambient tone ───
+        const soundToggle = document.getElementById('soundToggle');
+        let audioCtx = null,
+            nodes = null,
+            playing = false;
+
+        function startAmbience() {
+            audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            const master = audioCtx.createGain();
+            master.gain.value = 0;
+            master.connect(audioCtx.destination);
+            master.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 1.5);
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 800;
+            filter.connect(master);
+
+            const freqs = [220, 277.18, 329.63];
+            const oscs = freqs.map(function(f) {
+                const o = audioCtx.createOscillator();
+                o.type = 'sine';
+                o.frequency.value = f;
+                const g = audioCtx.createGain();
+                g.gain.value = 0.4;
+                o.connect(g);
+                g.connect(filter);
+                o.start();
+                return o;
+            });
+
+            const lfo = audioCtx.createOscillator();
+            lfo.frequency.value = 0.09;
+            const lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 100;
+            lfo.connect(lfoGain);
+            lfoGain.connect(filter.frequency);
+            lfo.start();
+
+            nodes = { master: master, oscs: oscs, lfo: lfo };
+        }
+
+        function stopAmbience() {
+            if (!nodes) return;
+            const now = audioCtx.currentTime;
+            nodes.master.gain.linearRampToValueAtTime(0, now + 1);
+            setTimeout(function() {
+                nodes.oscs.forEach(function(o) { o.stop(); });
+                nodes.lfo.stop();
+                audioCtx.close();
+                audioCtx = null;
+                nodes = null;
+            }, 1100);
+        }
+
+        soundToggle.addEventListener('click', function() {
+            playing = !playing;
+            soundToggle.setAttribute('aria-pressed', String(playing));
+            soundToggle.textContent = playing ? 'Выключить мелодию' : 'Тихая мелодия';
+            try {
+                if (playing) startAmbience();
+                else stopAmbience();
+            } catch (err) {
+                soundToggle.textContent = 'Мелодия недоступна';
+                soundToggle.disabled = true;
+            }
+        });
+    })();
+</script>
+</body>
+</html>
